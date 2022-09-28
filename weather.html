@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div id="app">
+        <div class="row">
+            <div class="col">
+                <select v-model="units" @change="change_units">
+                    <option value="metric">Celsius</option>
+                    <option value="standard">Kelvin</option>
+                    <option value="imperial">Fahrenheit</option>
+                </select>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-auto">
+              <label for="query" class="visually-hidden">Query</label>
+              <input type="text" v-model="query_city" class="form-control" id="query" placeholder="City or part of the city">
+            </div>
+            <div class="col-auto">
+              <button @click="search_for_cities" class="btn btn-primary mb-3"
+              :disabled="search_started">{{search_status}}</button>
+            </div>
+            <div v-if="query_city_results.length > 0">
+                <h1>Query results for "{{query_city}}"</h1>
+                <div class="row" v-for="city in query_city_results" :key="city.geonameId">
+                    <div class="col-8">{{city.name}}, {{city.countryCode}}</div>
+                    <div class="col-4">
+                        <button @click="display_weather_data(city.lat, city.lng)" class="btn btn-primary mb-2">Current weather</button>
+                    </div>
+                </div>
+            </div>
+            <div v-if="weather_data != null">
+                <h1>{{weather_data.name}} {{weather_data.sys.country}}</h1>
+                <p>Cordinates: {{weather_data.coord.lat}}, {{weather_data.coord.lon}} </p>
+                <p><img :src="get_weather_icon(weather_data.weather[0].icon)" />
+                {{weather_data.weather[0].description}}</p>
+                <p>Current temperature: {{ Math.round(weather_data.main.temp) }} {{unit_symbol}}</p>
+                <p>Maximum temperature: {{ Math.round(weather_data.main.temp_max) }} {{unit_symbol}}</p>
+                <p>Minimum temperature: {{ Math.round(weather_data.main.temp_min) }} {{unit_symbol}}</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" referrerpolicy="no-referrer"></script>
+    <script src="./js/weather.js"></script>
+    
+</body>
+</html>
+
